@@ -3,19 +3,38 @@ import "./index.css";
 import NotFound from "./pages/404/NotFound";
 import Product from "./pages/Products/_id";
 import Auth from "./pages/Auth/Auth";
+import Collection from "./pages/Collection";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Cart from "./pages/Cart";
+import PlaceOrder from "./pages/PlaceOrder";
+import Orders from "./pages/Orders";
+import Home from "./pages/Home";
+import Navbar from "./components/Header/Navbar";
 function App() {
     return (
-        <Routes>
-            {/* Product detail page  */}
-            <Route path="/products/:productId" element={<Product />} />
+        <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+            <Navbar />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/collection" element={<Collection />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/place-order" element={<PlaceOrder />} />
+                <Route path="/orders" element={<Orders />} />
 
-            {/* Authentication */}
-            <Route path="/login" element={<Auth />} />
-            <Route path="/register" element={<Auth />} />
+                {/* Product detail page  */}
+                <Route path="/products/:productId" element={<Product />} />
 
-            {/* 404 not found page */}
-            <Route path="*" element={<NotFound />} />
-        </Routes>
+                {/* Authentication */}
+                <Route path="/login" element={<Auth />} />
+                <Route path="/register" element={<Auth />} />
+
+                {/* 404 not found page */}
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </div>
     );
 }
 
