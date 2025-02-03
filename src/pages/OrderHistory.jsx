@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Hero_image from "~/assets/hero_img.jpg";
 
 function OrderHistory() {
-  // Sample order data (replace with actual data)
   const orders = [
     {
       id: "ORD001",
@@ -42,9 +41,9 @@ function OrderHistory() {
 
   // Function to handle status color
   const getStatusColor = (status) => {
-    if (status === "Đang xử lý") return "text-yellow-500"; // Yellow for processing
-    if (status === "Đã giao") return "text-green-500"; // Green for delivered
-    return "text-gray-500"; // Default gray color
+    if (status === "Đang xử lý") return "text-yellow-500";
+    if (status === "Đã giao") return "text-green-500";
+    return "text-gray-500";
   };
 
   return (
