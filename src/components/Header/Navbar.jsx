@@ -19,28 +19,28 @@ function Navbar() {
             <img src={Wooly_Logo} className="w-28" alt="" />
             <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
                 <NavLink to="/" className="flex flex-col items-center gap-1">
-                    <p>HOME</p>
+                    <p>TRANG CHỦ</p>
                     <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
                 </NavLink>
                 <NavLink
                     to="/collection"
                     className="flex flex-col items-center gap-1"
                 >
-                    <p>COLLECTION</p>
+                    <p>SẢN PHẨM</p>
                     <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
                 </NavLink>
                 <NavLink
                     to="/about"
                     className="flex flex-col items-center gap-1"
                 >
-                    <p>ABOUT</p>
+                    <p>GIỚI THIỆU</p>
                     <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
                 </NavLink>
                 <NavLink
                     to="/contact"
                     className="flex flex-col items-center gap-1"
                 >
-                    <p>CONTACT</p>
+                    <p>LIÊN HỆ</p>
                     <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
                 </NavLink>
             </ul>
