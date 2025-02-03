@@ -4,7 +4,6 @@ import Hero_image from "~/assets/hero_img.jpg";
 import { useState } from "react";
 
 function Cart() {
-  // Sample cart products with quantity
   const cartProducts = [
     {
       id: 1,
