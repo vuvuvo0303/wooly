@@ -64,7 +64,7 @@ function LoginForm() {
                             <TextField
                                 autoFocus
                                 fullWidth
-                                label="Enter Email..."
+                                label="Nhập Email..."
                                 type="text"
                                 variant="outlined"
                                 error={!!errors["email"]}
@@ -84,7 +84,7 @@ function LoginForm() {
                         <Box sx={{ marginTop: "1em" }}>
                             <TextField
                                 fullWidth
-                                label="Enter Password..."
+                                label="Nhập Password..."
                                 type="password"
                                 variant="outlined"
                                 error={!!errors["password"]}
@@ -110,11 +110,11 @@ function LoginForm() {
                             size="large"
                             fullWidth
                         >
-                            Login
+                            Đăng nhập
                         </Button>
                     </CardActions>
                     <Box sx={{ padding: "0 1em 1em 1em", textAlign: "center" }}>
-                        <Typography>New to Wooly account ?</Typography>
+                        <Typography>Bạn cần một tài khoản Wooly ?</Typography>
                         <Link to="/register" style={{ textDecoration: "none" }}>
                             <Typography
                                 sx={{
@@ -122,7 +122,19 @@ function LoginForm() {
                                     "&:hover": { color: "#ffbb39" },
                                 }}
                             >
-                                Create account
+                                Đăng Ký
+                            </Typography>
+                        </Link>
+                    </Box>
+                    <Box sx={{ padding: "0 1em 1em 1em", textAlign: "center" }}>
+                        <Link to="/forgotPW" style={{ textDecoration: "none" }}>
+                            <Typography
+                                sx={{
+                                    color: "primary.main",
+                                    "&:hover": { color: "#ffbb39" },
+                                }}
+                            >
+                                Quên mật khẩu
                             </Typography>
                         </Link>
                     </Box>

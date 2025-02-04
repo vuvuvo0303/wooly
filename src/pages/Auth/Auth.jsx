@@ -2,12 +2,14 @@ import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 function Auth() {
     const location = useLocation();
     // console.log(location)
     const isLogin = location.pathname === "/login";
     const isRegister = location.pathname === "/register";
+    const isForgotPW = location.pathname === "/forgotPW";
 
     return (
         <Box
@@ -26,6 +28,7 @@ function Auth() {
         >
             {isLogin && <LoginForm />}
             {isRegister && <RegisterForm />}
+            {isForgotPW && <ForgotPasswordForm />}
         </Box>
     );
 }
