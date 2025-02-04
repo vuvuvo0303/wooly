@@ -16,6 +16,9 @@ import {
     EMAIL_RULE,
     EMAIL_RULE_MESSAGE,
     FIELD_REQUIRED_MESSAGE,
+    PASSWORD_CONFIRMATION_MESSAGE,
+    PASSWORD_RULE,
+    PASSWORD_RULE_MESSAGE,
 } from "~/utils/validators";
 function ForgotPasswordForm() {
     const {
@@ -58,6 +61,7 @@ function ForgotPasswordForm() {
                     <Box sx={{ padding: "0 1em 1em 1em" }}>
                         <Box sx={{ marginTop: "1em" }}>
                             <TextField
+                                // autoComplete="nope"
                                 autoFocus
                                 fullWidth
                                 label="Nhập Email..."
@@ -77,6 +81,63 @@ function ForgotPasswordForm() {
                                 fieldName={"email"}
                             />
                         </Box>
+                        <Box sx={{ marginTop: "1em", display: "flex", gap: 1 }}>
+                            <TextField
+                                fullWidth
+                                label="Nhập OTP..."
+                                type="text"
+                                variant="outlined"
+                                error={!!errors["otp"]}
+                                {...register("otp", {
+                                    required: FIELD_REQUIRED_MESSAGE,
+                                })}
+                            />
+                            <Button variant="contained" color="primary">
+                                Get OTP
+                            </Button>
+                        </Box>
+                        <FieldErrorAlert errors={errors} fieldName={"otp"} />
+                        <Box sx={{ marginTop: "1em" }}>
+                            <TextField
+                                fullWidth
+                                label="Nhập Password..."
+                                type="password"
+                                variant="outlined"
+                                error={!!errors["password"]}
+                                {...register("password", {
+                                    required: FIELD_REQUIRED_MESSAGE,
+                                    pattern: {
+                                        value: PASSWORD_RULE,
+                                        message: PASSWORD_RULE_MESSAGE,
+                                    },
+                                })}
+                            />
+                            <FieldErrorAlert
+                                errors={errors}
+                                fieldName={"password"}
+                            />
+                        </Box>
+                        <Box sx={{ marginTop: "1em" }}>
+                            <TextField
+                                fullWidth
+                                label="Nhập Password Confirmation..."
+                                type="password"
+                                variant="outlined"
+                                error={!!errors["password_confirmation"]}
+                                {...register("password_confirmation", {
+                                    validate: (value) => {
+                                        if (value === watch("password")) {
+                                            return true;
+                                        }
+                                        return PASSWORD_CONFIRMATION_MESSAGE;
+                                    },
+                                })}
+                            />
+                            <FieldErrorAlert
+                                errors={errors}
+                                fieldName={"password_confirmation"}
+                            />
+                        </Box>
                     </Box>
                     <CardActions sx={{ padding: "0 1em 1em 1em" }}>
                         <Button
@@ -86,7 +147,7 @@ function ForgotPasswordForm() {
                             size="large"
                             fullWidth
                         >
-                            Xác Thực
+                            Thay đổi mật khẩu
                         </Button>
                     </CardActions>
                     <Box sx={{ padding: "0 1em 1em 1em", textAlign: "center" }}>
