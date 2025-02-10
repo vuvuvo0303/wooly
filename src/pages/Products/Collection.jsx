@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { fetchAllProductAPI } from "~/apis";
 import Hero_image from "~/assets/hero_img.jpg";
 
 function Collection() {
     const [showFilter, setShowFilter] = useState(false);
+    const [products, setProducts] = useState([]);
 
-    // Danh sách sản phẩm (giả lập)
-    const products = [
-        { id: 1, name: "Áo Len Tay Dài", price: "350.000đ" },
-        { id: 2, name: "Khăn Choàng Len", price: "200.000đ" },
-        { id: 3, name: "Mũ Len Handmade", price: "150.000đ" },
-        { id: 4, name: "Áo Len Cao Cấp", price: "500.000đ" },
-    ];
+    useEffect(() => {
+        fetchAllProductAPI().then((data) => {
+            setProducts(data);
+        });
+    }, []);
 
     return (
         <div className="flex flex-col sm:flex-row gap-6 pt-10 border-t">
@@ -43,7 +43,7 @@ function Collection() {
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {products.map((product) => (
                         <Link
-                            to={`/product/${product.id}`}
+                            to={`/product/${product.productID}`}
                             key={product.id}
                             className="border p-4 rounded-lg shadow hover:shadow-lg transition"
                         >
@@ -53,9 +53,12 @@ function Collection() {
                                 className="w-full h-40 object-cover rounded-md"
                             />
                             <h3 className="text-md font-medium mt-2">
-                                {product.name}
+                                {product.productName}
                             </h3>
                             <p className="text-gray-600">{product.price}</p>
+                            <p className="text-gray-600">
+                                Số lượng: {product.stockQuantity}
+                            </p>
                         </Link>
                     ))}
                 </div>

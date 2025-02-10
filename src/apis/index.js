@@ -24,3 +24,9 @@ export const fetchBestSellerProductAPI = async () => {
     const response = await axios.get(`${API_ROOT}/homepage/best-seller`);
     return response.data;
 };
+
+export const fetchAllProductAPI = async () => {
+    const response = await axios.get(`${API_ROOT}/product/get-all-product`);
+    console.log(response.data);
+    return response.data;
+};
