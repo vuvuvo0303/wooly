@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -19,6 +19,8 @@ import {
     PASSWORD_RULE,
     PASSWORD_RULE_MESSAGE,
 } from "~/utils/validators";
+import { loginUserAPI } from "~/apis";
+import { toast } from "react-toastify";
 
 function LoginForm() {
     const {
@@ -27,8 +29,17 @@ function LoginForm() {
         formState: { errors },
     } = useForm();
 
+    const navigate = useNavigate();
     const submitLogIn = (data) => {
         console.log("Submit login:", data);
+        const { email, password } = data;
+        toast
+            .promise(loginUserAPI({ email, password }), {
+                pending: "Login is in progress...",
+            })
+            .then(() => {
+                navigate(`/`);
+            });
     };
 
     return (
