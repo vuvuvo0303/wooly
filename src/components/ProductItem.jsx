@@ -1,7 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import Hero_image from "~/assets/hero_img.jpg";
 
 function ProductItem({ productName, productPicture, productPrice }) {
     return (

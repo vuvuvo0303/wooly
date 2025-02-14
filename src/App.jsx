@@ -14,6 +14,7 @@ import Navbar from "./components/Header/Navbar";
 import Footer from "./components/Footer";
 import Layout from "./components/Layout";
 import Profile from "./pages/Profile";
+import Checkout from "./pages/Checkout";
 function App() {
     return (
         <div>
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/orders" element={<Orders />} />
                     <Route path="/product/:productId" element={<Product />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/checkout" element={<Checkout />} />
                 </Route>
 
                 {/* Product detail page  */}

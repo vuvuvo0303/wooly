@@ -31,6 +31,18 @@ function Collection() {
                         <input type="checkbox" className="mr-2" /> Sản phẩm
                         custom
                     </label>
+                    <label className="block mb-2">
+                        <input type="checkbox" className="mr-2" /> Sản phẩm
+                        custom
+                    </label>
+                    <label className="block mb-2">
+                        <input type="checkbox" className="mr-2" /> Sản phẩm
+                        custom
+                    </label>
+                    <label className="block mb-2">
+                        <input type="checkbox" className="mr-2" /> Sản phẩm
+                        custom
+                    </label>
                 </div>
             </div>
 
@@ -55,7 +67,7 @@ function Collection() {
                             <h3 className="text-md font-medium mt-2">
                                 {product.productName}
                             </h3>
-                            <p className="text-gray-600">{product.price}</p>
+                            <p className="text-gray-600">{product.price}đ</p>
                             <p className="text-gray-600">
                                 Số lượng: {product.stockQuantity}
                             </p>
