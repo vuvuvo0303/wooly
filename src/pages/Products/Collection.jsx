@@ -1,12 +1,20 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchAllProductAPI } from "~/apis";
 import Hero_image from "~/assets/hero_img.jpg";
-import { fetchAllProducts } from "~/redux/features/activeProductSlice";
+import {
+  fetchAllProducts,
+  fetchProductsByCategory,
+} from "~/redux/features/activeProductSlice";
+import API_ROOT from "~/utils/constants";
+// import { fetchCategories } from "~/redux/features/categorySlice";
 
 function Collection() {
   const [showFilter, setShowFilter] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
   // const [products, setProducts] = useState([]);
 
   // useEffect(() => {
@@ -19,11 +27,33 @@ function Collection() {
   const { items: products, status } = useSelector(
     (state) => state.products.all
   );
+  // const { categories } = useSelector((state) => state.categories);
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchAllProducts());
     }
+    // dispatch(fetchCategories());
   }, [status, dispatch]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await axios.get(`${API_ROOT}/category/get-all-category`);
+      console.log("fetchCategories", response.data);
+
+      setCategories(response.data);
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleCategoryChange = (categoryId) => {
+    if (selectedCategory === categoryId) {
+      setSelectedCategory(null);
+      dispatch(fetchAllProducts()); // Nếu bấm lại, hiển thị tất cả sản phẩm
+    } else {
+      setSelectedCategory(categoryId);
+      dispatch(fetchProductsByCategory(categoryId)); // Fetch sản phẩm theo category
+    }
+  };
   return (
     <div className="flex flex-col sm:flex-row gap-6 pt-10 border-t">
       {/* Sidebar Filter */}
@@ -34,6 +64,18 @@ function Collection() {
       >
         <h2 className="text-lg font-semibold mb-4">Bộ Lọc</h2>
         <div>
+          {/* {categories.map((category) => (
+            <label key={category.id} className="block mb-2">
+              <input
+                type="radio"
+                name="categoryFilter"
+                className="mr-2"
+                checked={selectedCategory === category.id}
+                onChange={() => handleCategoryChange(category.id)}
+              />
+              {category.name}
+            </label>
+          ))} */}
           <label className="block mb-2">
             <input type="checkbox" className="mr-2" /> Sản phẩm có sẵn
           </label>

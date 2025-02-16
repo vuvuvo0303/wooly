@@ -25,7 +25,7 @@ export const fetchAllProducts = createAsyncThunk(
     "products/fetchAll",
     async () => {
         const response = await axios.get(`${API_ROOT}/product/get-all-product`);
-        return response.data.data;
+        return response.data;
     }
 );
 
@@ -34,7 +34,17 @@ export const fetchProductById = createAsyncThunk(
     "products/fetchById",
     async (productId) => {
         const response = await axios.get(`${API_ROOT}/product/get-product-by/${productId}`);
-        console.log("fetchById",response.data);
+        console.log("fetchById", response.data);
+        return response.data;
+    }
+);
+
+export const fetchProductsByCategory = createAsyncThunk(
+    "products/fetchByCategory",
+    async (categoryId) => {
+        const response = await axios.get(`${API_ROOT}/product/get-by-category/${categoryId}`);
+        console.log("fetchByCategory",response.data);
+        
         return response.data;
     }
 );
@@ -100,6 +110,19 @@ const activeProductSlice = createSlice({
             .addCase(fetchProductById.rejected, (state, action) => {
                 state.productDetail.status = "failed";
                 state.productDetail.error = action.error.message;
+            })
+
+            //product by cate id
+            .addCase(fetchProductsByCategory.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.items = action.payload;
+            })
+            .addCase(fetchProductsByCategory.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.error.message;
             });
     },
 });

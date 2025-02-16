@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchProductById } from "~/redux/features/activeProductSlice";
+import Hero_image from "~/assets/hero_img.jpg";
 
 function ProductDetail() {
   const { productId } = useParams();
@@ -13,7 +14,7 @@ function ProductDetail() {
     error,
   } = useSelector((state) => state.products.productDetail);
 
-  const [selectedPart, setSelectedPart] = useState(0); // Chọn linh kiện đầu tiên mặc định
+  const [selectedPart, setSelectedPart] = useState(0);
   const [selectedColor, setSelectedColor] = useState(null);
 
   useEffect(() => {
@@ -47,10 +48,9 @@ function ProductDetail() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Hình ảnh sản phẩm */}
         <div>
           <img
-            src={product.imageUrl || "https://via.placeholder.com/300"}
+            src={product.imageUrl || { Hero_image }}
             alt={product.productName}
             className="w-full h-80 object-cover rounded-lg"
           />
@@ -70,10 +70,9 @@ function ProductDetail() {
             Số lượng tồn kho: {product.stockQuantity}
           </p>
 
-          {/* Chọn linh kiện */}
           {product.partName?.length > 0 && (
             <div className="mt-4">
-              <h3 className="text-lg font-medium mb-2">Chọn linh kiện:</h3>
+              <h3 className="text-lg font-medium mb-2">Chọn bộ phận:</h3>
               <div className="flex gap-3">
                 {product.partName.map((part, index) => (
                   <button
