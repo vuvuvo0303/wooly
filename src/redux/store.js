@@ -5,6 +5,7 @@ import authReducer from "~/redux/features/authSlice";
 import activeProductReducer from "~/redux/features/activeProductSlice";
 import categoryReducer from "~/redux/features/categorySlice";
 import accountReducer from "~/redux/features/accountSlice";
+import orderReducer from "./features/orderSlice";
 
 const persistConfig = {
   key: "auth",
@@ -20,6 +21,7 @@ export const store = configureStore({
     products: activeProductReducer,
     categories: categoryReducer,
     account: accountReducer,
+    order: orderReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserProfile } from "~/redux/features/accountSlice";
 import {
   Avatar,
   Button,
@@ -8,19 +10,13 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchUserProfile } from "~/redux/features/accountSlice";
+import { Female, HelpOutline, Male } from "@mui/icons-material";
 
 function Profile() {
   const dispatch = useDispatch();
-  const { userr, status } = useSelector((state) => state.account);
+  const { user: userData, status } = useSelector((state) => state.account);
 
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchUserProfile());
-    }
-  }, [status, dispatch]);
-
+  // State mặc định
   const [user, setUser] = useState({
     avatar: "https://i.pravatar.cc/150?img=3",
     name: "Nguyễn Văn A",
@@ -29,10 +25,39 @@ function Profile() {
     address: "123 Đường ABC, Quận 1, TP. Hồ Chí Minh",
   });
 
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchUserProfile());
+    }
+  }, [status, dispatch]);
+
+  // Cập nhật dữ liệu khi có API
+  useEffect(() => {
+    if (userData) {
+      setUser((prev) => ({
+        avatar: userData.avatar || prev.avatar,
+        name: userData.name || "Chưa cập nhật",
+        email: userData.email || "Chưa cập nhật",
+        gender: userData.gender || "Chưa cập nhật",
+        phone: userData.phone || "Chưa cập nhật",
+        address: userData.address || "Chưa cập nhật",
+      }));
+    }
+  }, [userData]);
+
+  // Hàm hiển thị giá trị (nếu null => "Chưa cập nhật")
+  const displayValue = (value) => value || "Chưa cập nhật";
+
+  // State modal
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newAvatar, setNewAvatar] = useState(user.avatar);
   const [editedUser, setEditedUser] = useState(user);
+
+  useEffect(() => {
+    setEditedUser(user);
+    setNewAvatar(user.avatar);
+  }, [user]);
 
   // Xử lý mở & đóng modal
   const openAvatarModal = () => setIsAvatarModalOpen(true);
@@ -67,37 +92,57 @@ function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      {/* Tiêu đề */}
       <h1 className="text-3xl font-bold text-center mb-6">Thông Tin Cá Nhân</h1>
 
-      {/* Hồ sơ */}
-      <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row gap-6">
-        {/* Ảnh đại diện */}
-        <div className="flex flex-col items-center">
-          <Avatar
-            src={user.avatar}
-            alt="Avatar"
-            sx={{ width: 128, height: 128, cursor: "pointer" }}
-            onClick={openAvatarModal} // Mở modal khi click vào avatar
-          />
-        </div>
+      {status === "loading" ? (
+        <p>Đang tải...</p>
+      ) : status === "failed" ? (
+        <p className="text-red-500">Lỗi khi lấy thông tin người dùng</p>
+      ) : (
+        <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col sm:flex-row gap-6">
+          <div className="flex flex-col items-center">
+            <Avatar
+              src={newAvatar}
+              alt="Avatar"
+              sx={{ width: 128, height: 128, cursor: "pointer" }}
+              onClick={openAvatarModal}
+            />
+          </div>
 
-        {/* Thông tin cá nhân */}
-        <div className="flex-1">
-          <p className="text-xl font-semibold mb-2">{user.name}</p>
-          <p className="text-gray-700">📧 {user.email}</p>
-          <p className="text-gray-700">📞 {user.phone}</p>
-          <p className="text-gray-700">📍 {user.address}</p>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={openEditModal}
-            sx={{ mt: 2 }}
-          >
-            Chỉnh sửa hồ sơ
-          </Button>
+          <div className="flex-1">
+            <p className="text-xl font-semibold mb-2">
+              {displayValue(user.name)}
+            </p>
+            <p className="text-gray-700">
+              🚻 Giới tính:
+              {user.gender === "MALE" ? (
+                <span className="bg-blue-200 text-blue-700 p-2 rounded-full">
+                  <Male />
+                </span>
+              ) : user.gender === "FEMALE" ? (
+                <span className="bg-pink-200 text-pink-700 p-2 rounded-full">
+                  <Female />
+                </span>
+              ) : (
+                <span className="bg-gray-200 text-gray-700 p-2 rounded-full">
+                  <HelpOutline />
+                </span>
+              )}
+            </p>
+            <p className="text-gray-700">📧 {displayValue(user.email)}</p>
+            <p className="text-gray-700">📞 {displayValue(user.phone)}</p>
+            <p className="text-gray-700">📍 {displayValue(user.address)}</p>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={openEditModal}
+              sx={{ mt: 2 }}
+            >
+              Chỉnh sửa hồ sơ
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Modal thay đổi ảnh đại diện */}
       <Dialog open={isAvatarModalOpen} onClose={closeAvatarModal}>
@@ -131,7 +176,7 @@ function Profile() {
             margin="dense"
             label="Họ và tên"
             name="name"
-            value={editedUser.name}
+            value={editedUser.name || ""}
             onChange={handleInputChange}
           />
           <TextField
@@ -139,7 +184,7 @@ function Profile() {
             margin="dense"
             label="Email"
             name="email"
-            value={editedUser.email}
+            value={editedUser.email || ""}
             onChange={handleInputChange}
           />
           <TextField
@@ -147,7 +192,7 @@ function Profile() {
             margin="dense"
             label="Số điện thoại"
             name="phone"
-            value={editedUser.phone}
+            value={editedUser.phone || ""}
             onChange={handleInputChange}
           />
           <TextField
@@ -155,7 +200,15 @@ function Profile() {
             margin="dense"
             label="Địa chỉ"
             name="address"
-            value={editedUser.address}
+            value={editedUser.address || ""}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth
+            margin="dense"
+            label="Giới tính"
+            name="gender"
+            value={editedUser.gender || ""}
             onChange={handleInputChange}
           />
         </DialogContent>
