@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -8,9 +8,9 @@ import { Card as MuiCard } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import TextField from "@mui/material/TextField";
 import Zoom from "@mui/material/Zoom";
-import Alert from "@mui/material/Alert";
 import { useForm } from "react-hook-form";
-
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
 import {
   EMAIL_RULE,
@@ -20,11 +20,11 @@ import {
   PASSWORD_RULE,
   PASSWORD_RULE_MESSAGE,
 } from "~/utils/validators";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
-import { getOtp, getOtpliu } from "~/redux/features/authSlice";
+import { forgotPassword, getOtp } from "~/redux/features/authSlice";
+
 function ForgotPasswordForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -32,31 +32,44 @@ function ForgotPasswordForm() {
     watch,
   } = useForm();
 
-  const submitLogIn = (data) => {
-    console.log("Submit login:", data);
+  // const submitResetPass = (data) => {
+  //   const formattedData = {
+  //     otp: data.otp,
+  //     email: data.email,
+  //     newPassword: data.password,
+  //   };
+  //   console.log("Submit reset password:", formattedData);
+  //   dispatch(forgotPassword(formattedData));
+  // };
+  const submitResetPass = async (data) => {
+    const formattedData = {
+      otp: data.otp,
+      email: data.email,
+      newPassword: data.password,
+    };
+
+    const response = await dispatch(forgotPassword(formattedData));
+    console.log("forgotPassword", response);
+
+    const stt = await response?.meta?.requestStatus;
+    console.log("stt", stt);
+    navigate("/register");
+    // if (stt === "fulfilled") {
+    //   navigate("/register");
+    // }
   };
 
   const handleGetOTP = () => {
-    console.log("handleGetOTP");
     const email = watch("email")?.trim();
-
     if (!email) {
       toast.error("Vui lòng nhập email trước khi lấy OTP!");
       return;
     }
-
-    console.log(email);
-
     dispatch(getOtp(email));
   };
 
-  const handleGetOTPliu = () => {
-    console.log("handleGetOTPliu");
-
-    dispatch(getOtpliu());
-  };
   return (
-    <form onSubmit={handleSubmit(submitLogIn)}>
+    <form onSubmit={handleSubmit(submitResetPass)}>
       <Zoom in={true} style={{ transitionDelay: "200ms" }}>
         <MuiCard sx={{ minWidth: 380, maxWidth: 380, marginTop: "6em" }}>
           <Box
@@ -72,25 +85,15 @@ function ForgotPasswordForm() {
             </Avatar>
           </Box>
 
-          <Box
-            sx={{
-              marginTop: "1em",
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-              padding: "0 1em",
-            }}
-          ></Box>
           <Box sx={{ padding: "0 1em 1em 1em" }}>
             <Box sx={{ marginTop: "1em" }}>
               <TextField
-                // autoComplete="nope"
                 autoFocus
                 fullWidth
                 label="Nhập Email..."
                 type="text"
                 variant="outlined"
-                error={!!errors["email"]}
+                error={!!errors.email}
                 {...register("email", {
                   required: FIELD_REQUIRED_MESSAGE,
                   pattern: {
@@ -107,7 +110,7 @@ function ForgotPasswordForm() {
                 label="Nhập OTP..."
                 type="text"
                 variant="outlined"
-                error={!!errors["otp"]}
+                error={!!errors.otp}
                 {...register("otp", {
                   required: FIELD_REQUIRED_MESSAGE,
                 })}
@@ -127,12 +130,21 @@ function ForgotPasswordForm() {
                 label="Nhập Password..."
                 type="password"
                 variant="outlined"
-                error={!!errors["password"]}
+                error={!!errors.password}
                 {...register("password", {
                   required: FIELD_REQUIRED_MESSAGE,
                   pattern: {
                     value: PASSWORD_RULE,
                     message: PASSWORD_RULE_MESSAGE,
+                  },
+                  validate: (value) => {
+                    if (
+                      watch("password_confirmation") &&
+                      value !== watch("password_confirmation")
+                    ) {
+                      return PASSWORD_CONFIRMATION_MESSAGE;
+                    }
+                    return true;
                   },
                 })}
               />
@@ -144,13 +156,14 @@ function ForgotPasswordForm() {
                 label="Nhập Password Confirmation..."
                 type="password"
                 variant="outlined"
-                error={!!errors["password_confirmation"]}
+                error={!!errors.password_confirmation}
                 {...register("password_confirmation", {
+                  required: FIELD_REQUIRED_MESSAGE,
                   validate: (value) => {
-                    if (value === watch("password")) {
-                      return true;
+                    if (value !== watch("password")) {
+                      return PASSWORD_CONFIRMATION_MESSAGE;
                     }
-                    return PASSWORD_CONFIRMATION_MESSAGE;
+                    return true;
                   },
                 })}
               />
@@ -175,10 +188,7 @@ function ForgotPasswordForm() {
             <Typography>Bạn đã có tài khoản ?</Typography>
             <Link to="/register" style={{ textDecoration: "none" }}>
               <Typography
-                sx={{
-                  color: "primary.main",
-                  "&:hover": { color: "#ffbb39" },
-                }}
+                sx={{ color: "primary.main", "&:hover": { color: "#ffbb39" } }}
               >
                 Đăng nhập
               </Typography>

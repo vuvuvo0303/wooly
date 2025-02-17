@@ -41,8 +41,10 @@ export const getOtp = createAsyncThunk(
   "auth/getOtp",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_ROOT}/auth/get-otp`, { email });
-      toast.success("OTP đã gửi về email!");
+      const response = await axios.post(`${API_ROOT}/auth/get-otp`, { email });
+      toast.success(response.data.message);
+      console.log("OTP",response.data);
+      
       return response.data;
     } catch (error) {
       toast.error(error.response?.data?.error || "Lấy OTP thất bại!");
@@ -51,24 +53,15 @@ export const getOtp = createAsyncThunk(
   }
 );
 
-
-export const getOtpliu = createAsyncThunk(
-  "auth/getOtpliu",
-  async () => {
-      const response = await axios.get(`${API_ROOT}/auth/get-otp?email=caothuilui%40gmail.com`);
-      // toast(response);
-      console.log("otp",response.data);
-      
-      return response.data;
-  }
-);
-// Đổi mật khẩu
-export const changePassword = createAsyncThunk(
-  "auth/changePassword",
+// forgotPassword
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_ROOT}/auth/change-password`, data);
-      toast.success("Đổi mật khẩu thành công! Hãy đăng nhập lại.");
+      const response = await axios.post(`${API_ROOT}/auth/forgot-password`, data);
+      console.log("forgotPasswordSlice",response.data);
+      
+      toast.success(response.data.message);
       return response.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Đổi mật khẩu thất bại!");
@@ -146,14 +139,14 @@ const authSlice = createSlice({
         state.error = action.payload?.message || "Có lỗi xảy ra!";
       })
 
-      // Đổi mật khẩu
-      .addCase(changePassword.pending, (state) => {
+      // forgetPassword
+      .addCase(forgotPassword.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(changePassword.fulfilled, (state) => {
+      .addCase(forgotPassword.fulfilled, (state) => {
         state.status = "succeeded";
       })
-      .addCase(changePassword.rejected, (state, action) => {
+      .addCase(forgotPassword.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload?.message || "Có lỗi xảy ra!";
       });
