@@ -9,12 +9,12 @@ import {
   fetchProductsByCategory,
 } from "~/redux/features/activeProductSlice";
 import API_ROOT from "~/utils/constants";
-// import { fetchCategories } from "~/redux/features/categorySlice";
+import { fetchCategories } from "~/redux/features/categorySlice";
 
 function Collection() {
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
   // const [products, setProducts] = useState([]);
 
   // useEffect(() => {
@@ -27,31 +27,22 @@ function Collection() {
   const { items: products, status } = useSelector(
     (state) => state.products.all
   );
-  // const { categories } = useSelector((state) => state.categories);
+  const { categories } = useSelector((state) => state.categories);
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchAllProducts());
     }
-    // dispatch(fetchCategories());
+    dispatch(fetchCategories());
+    console.log("categories", categories);
   }, [status, dispatch]);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await axios.get(`${API_ROOT}/category/get-all-category`);
-      console.log("fetchCategories", response.data);
-
-      setCategories(response.data);
-    };
-
-    fetchCategories();
-  }, []);
 
   const handleCategoryChange = (categoryId) => {
     if (selectedCategory === categoryId) {
       setSelectedCategory(null);
-      dispatch(fetchAllProducts()); // Nếu bấm lại, hiển thị tất cả sản phẩm
+      dispatch(fetchAllProducts());
     } else {
       setSelectedCategory(categoryId);
-      dispatch(fetchProductsByCategory(categoryId)); // Fetch sản phẩm theo category
+      dispatch(fetchProductsByCategory(categoryId));
     }
   };
   return (
@@ -64,7 +55,7 @@ function Collection() {
       >
         <h2 className="text-lg font-semibold mb-4">Bộ Lọc</h2>
         <div>
-          {/* {categories.map((category) => (
+          {categories?.map((category) => (
             <label key={category.id} className="block mb-2">
               <input
                 type="radio"
@@ -75,7 +66,7 @@ function Collection() {
               />
               {category.name}
             </label>
-          ))} */}
+          ))}
           <label className="block mb-2">
             <input type="checkbox" className="mr-2" /> Sản phẩm có sẵn
           </label>

@@ -2,12 +2,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import API_ROOT from "~/utils/constants";
 
-// Async thunk để get all categories
 export const fetchCategories = createAsyncThunk(
   "category/fetchCategories",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_ROOT}/category/get-all-category`);
+      console.log("fetchCategories",response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Lỗi khi lấy danh mục!");
@@ -17,7 +17,7 @@ export const fetchCategories = createAsyncThunk(
 
 const initialState = {
   categories: [],
-  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: "idle", 
   error: null,
 };
 
