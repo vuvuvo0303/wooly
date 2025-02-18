@@ -7,23 +7,30 @@ import { useState } from "react";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import { persistor } from "~/redux/store";
 import { logoutUser } from "~/redux/features/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; // Thêm useSelector
+
 function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const dispatch = useDispatch();
+
+  // Lấy trạng thái auth từ Redux store
+  const { accessToken } = useSelector((state) => state.auth);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const dispatch = useDispatch();
+
   const handleLogout = () => {
     dispatch(logoutUser());
     console.log("logout success");
-
     persistor.purge();
   };
+
   return (
     <div className="flex items-center justify-between py-5 font-medium">
       <img src={Wooly_Logo} className="w-28" alt="" />
@@ -65,15 +72,23 @@ function Navbar() {
             }}
             sx={{ width: 320, maxWidth: "100%" }}
           >
-            <MenuItem component={Link} to="/profile" onClick={handleClose}>
-              Profile
-            </MenuItem>
-            <MenuItem component={Link} to="/orders" onClick={handleClose}>
-              My Orders
-            </MenuItem>
-            <MenuItem component={Link} to="/login" onClick={handleLogout}>
-              Logout
-            </MenuItem>
+            {/* Kiểm tra nếu có token, hiển thị Profile, My Orders, và Logout */}
+            {accessToken ? (
+              <>
+                <MenuItem component={Link} to="/profile" onClick={handleClose}>
+                  Profile
+                </MenuItem>
+                <MenuItem component={Link} to="/orders" onClick={handleClose}>
+                  My Orders
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </>
+            ) : (
+              // Nếu không có token, hiển thị Login
+              <MenuItem component={Link} to="/login" onClick={handleClose}>
+                Login
+              </MenuItem>
+            )}
           </Menu>
         </div>
         <Link to="/cart" className="relative">
