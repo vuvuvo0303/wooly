@@ -84,6 +84,7 @@ function Navbar() {
                                 setShowSearch(false);
                                 setSearchText("");
                             }}
+                            className="left-1"
                         >
                             <CloseIcon style={{ color: "#cdcdcd" }} />
                         </IconButton>
