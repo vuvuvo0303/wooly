@@ -1,123 +1,113 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { fetchAllProductAPI } from "~/apis";
-import Hero_image from "~/assets/hero_img.jpg";
-import {
-  fetchAllProducts,
-  fetchProductsByCategory,
-} from "~/redux/features/activeProductSlice";
-import API_ROOT from "~/utils/constants";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { fetchAllProducts } from "~/redux/features/activeProductSlice";
 import { fetchCategories } from "~/redux/features/categorySlice";
+import { searchProducts } from "~/redux/features/searchSlice";
+import Hero_image from "~/assets/hero_img.jpg";
 
 function Collection() {
-  const [showFilter, setShowFilter] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  // const [categories, setCategories] = useState([]);
-  // const [products, setProducts] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const searchQuery = queryParams.get("search");
+  const categoryQuery = queryParams.get("category");
 
-  // useEffect(() => {
-  //     fetchAllProductAPI().then((data) => {
-  //         setProducts(data);
-  //     });
-  // }, []);
-
+  const [selectedCategory, setSelectedCategory] = useState(categoryQuery || "");
   const dispatch = useDispatch();
+
   const { items: products, status } = useSelector(
     (state) => state.products.all
   );
+  const searchResults = useSelector((state) => state.search.results);
   const { categories } = useSelector((state) => state.categories);
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchAllProducts());
-    }
-    dispatch(fetchCategories());
-    console.log("categories", categories);
-  }, [status, dispatch]);
 
-  const handleCategoryChange = (categoryId) => {
-    if (selectedCategory === categoryId) {
-      setSelectedCategory(null);
+  useEffect(() => {
+    if (searchQuery || selectedCategory) {
+      dispatch(
+        searchProducts({
+          productName: searchQuery || "",
+          categoryName: selectedCategory || "",
+        })
+      );
+    } else if (status === "idle") {
       dispatch(fetchAllProducts());
-    } else {
-      setSelectedCategory(categoryId);
-      dispatch(fetchProductsByCategory(categoryId));
     }
+
+    dispatch(fetchCategories());
+  }, [searchQuery, selectedCategory, status, dispatch]);
+
+  const handleCategoryChange = (categoryName) => {
+    setSelectedCategory(categoryName);
+
+    const params = new URLSearchParams({
+      search: searchQuery || "",
+      category: categoryName || "",
+    }).toString();
+
+    navigate(`/collection?${params}`);
   };
+
   return (
     <div className="flex flex-col sm:flex-row gap-6 pt-10 border-t">
       {/* Sidebar Filter */}
-      <div
-        className={`w-full sm:w-1/4 p-4 border-r transition-all ${
-          showFilter ? "block" : "hidden sm:block"
-        }`}
-      >
+      <div className="w-full sm:w-1/4 p-4 border-r">
         <h2 className="text-lg font-semibold mb-4">Bộ Lọc</h2>
-        {/* <input
-                    type="text"
-                    placeholder="Tìm kiếm danh mục..."
-                    className="w-full p-2 mb-4 border rounded"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                /> */}
         <div>
           {categories?.map((category) => (
             <label key={category.id} className="block mb-2">
               <input
-                type="checkbox"
+                type="radio"
                 name="categoryFilter"
                 className="mr-2"
-                checked={selectedCategory === category.id}
-                onChange={() => handleCategoryChange(category.id)}
+                checked={selectedCategory === category.name}
+                onChange={() => handleCategoryChange(category.name)}
               />
               {category.name}
             </label>
           ))}
-          {/* <label className="block mb-2">
-            <input type="checkbox" className="mr-2" /> Sản phẩm có sẵn
-          </label>
-          <label className="block mb-2">
-            <input type="checkbox" className="mr-2" /> Sản phẩm custom
-          </label>
-          <label className="block mb-2">
-            <input type="checkbox" className="mr-2" /> Sản phẩm custom
-          </label>
-          <label className="block mb-2">
-            <input type="checkbox" className="mr-2" /> Sản phẩm custom
-          </label>
-          <label className="block mb-2">
-            <input type="checkbox" className="mr-2" /> Sản phẩm custom
-          </label> */}
         </div>
+        <button
+          onClick={() => {
+            setSelectedCategory(null);
+            dispatch(fetchAllProducts());
+          }}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+        >
+          Tải lại tất cả sản phẩm
+        </button>
       </div>
 
       {/* Product List */}
       <div className="w-full sm:w-3/4 p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Sản Phẩm</h2>
-        </div>
-
+        <h2 className="text-lg font-semibold mb-4">Sản Phẩm</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.map((product) => (
-            <Link
-              to={`/product/${product.productID}`}
-              key={product.id}
-              className="border p-4 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <img
-                src={Hero_image}
-                alt={product.name}
-                className="w-full h-40 object-cover rounded-md"
-              />
-              <h3 className="text-md font-medium mt-2">
-                {product.productName}
-              </h3>
-              <p className="text-gray-600">{product.price}đ</p>
-              <p className="text-gray-600">Số lượng: {product.stockQuantity}</p>
-            </Link>
-          ))}
+          {(searchQuery ? searchResults : products).length > 0 ? (
+            (searchQuery ? searchResults : products).map((product) => (
+              <Link
+                to={`/product/${product.productID}`}
+                key={product.id}
+                className="border p-4 rounded-lg shadow hover:shadow-lg transition"
+              >
+                <img
+                  src={Hero_image}
+                  alt={product.name}
+                  className="w-full h-40 object-cover rounded-md"
+                />
+                <h3 className="text-md font-medium mt-2">
+                  {product.productName}
+                </h3>
+                <p className="text-gray-600">{product.price}đ</p>
+                <p className="text-gray-600">
+                  Số lượng: {product.stockQuantity}
+                </p>
+              </Link>
+            ))
+          ) : (
+            <p className="text-gray-500 col-span-full text-center">
+              Không có sản phẩm phù hợp với yêu cầu của bạn.
+            </p>
+          )}
         </div>
       </div>
     </div>
